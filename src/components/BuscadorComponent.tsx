@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import getFormattedDate from "../utils/dateNow";
+import { httpClient } from "../services/api";
 
 interface Sucursal {
   id: number;
@@ -9,28 +10,54 @@ interface Sucursal {
 interface propsBuscador {
   sucursales: Sucursal[];
   dateNow: (newDate: string) => void;
+  updateCajaData: (newCajaData: object) => void;
 }
 
-const BuscadorComponent = ({ sucursales, dateNow }: propsBuscador) => {
+const BuscadorComponent = ({
+  sucursales,
+  dateNow,
+  updateCajaData,
+}: propsBuscador) => {
   const [date, setDate] = useState("");
+  const [sucursal, setSucursal] = useState("");
+  const [caja, setCaja] = useState({});
+
   useEffect(() => {
     setDate(getFormattedDate());
   }, []);
 
+  useEffect(() => {
+    // Only call handleBuscador if both date and sucursal have values
+    if (date && sucursal) {
+      handleBuscador(date, sucursal);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date, sucursal]);
+
+  const handleBuscador = async (fecha: string, selectedSucursal: string) => {
+    const { data } = await httpClient.get(
+      `get_caja/${fecha}/${selectedSucursal}`
+    );
+    setCaja(data[0]);
+    updateCajaData(data[0]);
+  };
+
   return (
-    <form action="" className="mt-4">
+    <form>
       <div className="flex">
         <div className="flex-1">
           <select
             className="w-full p-2 rounded-md text-gray-400"
             placeholder=""
+            value={sucursal}
+            onChange={(e) => setSucursal(e.target.value)}
           >
             <option value="0" className="">
               Seleccione una Ciudad
             </option>
             {sucursales.map((sucursal) => (
               <option
-                value={sucursal.id}
+                value={sucursal.id.toString()} // Ensure value is a string
                 key={sucursal.id}
                 className="text-black"
               >

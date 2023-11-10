@@ -4,6 +4,7 @@ import { CajaPage } from "./pages/box/CajaPage";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { useLocalStorage } from "react-use";
 import { Home } from "./layouts/Home";
+import { UsuarioPage } from "./pages/users/UsuarioPage";
 
 function App() {
   const [user] = useLocalStorage("user");
@@ -15,6 +16,7 @@ function App() {
         <Route element={<ProtectedRoute canActivate={user} />}>
           <Route element={<Home />}>
             <Route path="/caja" element={<CajaPage />} />
+            <Route path="/usuarios" element={<UsuarioPage />} />
           </Route>
         </Route>
       </Routes>

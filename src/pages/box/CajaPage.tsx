@@ -19,7 +19,12 @@ import Button from "@mui/material/Button";
 import BuscadorComponent from "../../components/BuscadorComponent";
 import getFormattedDate from "../../utils/dateNow";
 import { CreateCaja } from "./modals/CreateCaja";
-import { Caja_driver, Drivers, Sucursal } from "../../interfaces/interfaces";
+import {
+  CajaData,
+  Caja_driver,
+  Drivers,
+  Sucursal,
+} from "../../interfaces/interfaces";
 
 export const CajaPage = () => {
   const [sucursales, setSetsucursales] = useState<Sucursal[]>([]);
@@ -28,7 +33,9 @@ export const CajaPage = () => {
   const [caja_driver, setCaja_driver] = useState<Caja_driver[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [cajaData, setCajaData] = useState<CajaData>({});
   // Traer todos los sucursales
+
   const getSucursal = async () => {
     const { data } = await httpClient.get("getSucursal");
     setSetsucursales(data.sucursal);
@@ -99,6 +106,10 @@ export const CajaPage = () => {
     )
   );
 
+  const updateCajaData = (newCajaData: object) => {
+    setCajaData(newCajaData);
+  };
+
   useEffect(() => {
     getSucursal();
     getDriver();
@@ -116,14 +127,17 @@ export const CajaPage = () => {
       <div className="p-5">
         <h2 className="text-lg font-medium">Registro de Caja</h2>
         {/* BUSCADOR */}
-        <BuscadorComponent sucursales={sucursales} dateNow={dateNow} />
+        <BuscadorComponent
+          sucursales={sucursales}
+          dateNow={dateNow}
+          updateCajaData={updateCajaData}
+        />
         {/*FIN BUSCADOR */}
 
         {/* ASIGNAR CAJA */}
         <form>
           <div className="w-[30rem] bg-white shadow-md mt-7 p-5">
             <h3>CAJA</h3>
-
             <div className="flex flex-col">
               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                 <InputLabel htmlFor="standard-adornment-amount">
@@ -135,6 +149,7 @@ export const CajaPage = () => {
                   startAdornment={
                     <InputAdornment position="start">$</InputAdornment>
                   }
+                  value={cajaData?.montoApertura}
                   placeholder="0"
                 />
               </FormControl>
@@ -152,6 +167,7 @@ export const CajaPage = () => {
                     <InputAdornment position="start">$</InputAdornment>
                   }
                   placeholder="0"
+                  value={cajaData?.salidaEfectivo}
                 />
               </FormControl>
             </div>

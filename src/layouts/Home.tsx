@@ -5,7 +5,7 @@ export const Home = () => {
   return (
     <div className="flex">
       <NavBarComponents></NavBarComponents>
-      <Outlet />
+        <Outlet />
     </div>
   );
 };

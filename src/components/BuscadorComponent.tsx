@@ -13,7 +13,6 @@ interface propsBuscador {
 
 const BuscadorComponent = ({ sucursales, dateNow }: propsBuscador) => {
   const [date, setDate] = useState("");
-
   useEffect(() => {
     setDate(getFormattedDate());
   }, []);
@@ -46,7 +45,7 @@ const BuscadorComponent = ({ sucursales, dateNow }: propsBuscador) => {
             className="bg-green-200 appearance-none rounded p-2 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             onChange={(e) => {
               const newDate = e.target.value;
-              setDate(newDate)
+              setDate(newDate);
               dateNow(newDate); // Llama a dateNow con la nueva fecha
             }}
             value={date}

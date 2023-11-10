@@ -1,9 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { protectedRoute } from "../interfaces/interfaces";
 
-interface protectedRoute {
-  canActivate: unknown;
-  redirectPath?: string;
-}
+
 
 const ProtectedRoute = ({
   canActivate,

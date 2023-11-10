@@ -8,6 +8,7 @@ export interface Drivers {
 export interface props {
   setOpenModal: Dispatch<React.SetStateAction<boolean>>;
   drivers: Drivers[];
+  caja_repartidor: () => void
 }
 
 export interface Detalles {
@@ -16,7 +17,7 @@ export interface Detalles {
 }
 
 export interface Caja_driver {
-  id: string;
+  id: number;
   repartidor: string;
   monto: number;
   hora: number;
@@ -24,9 +25,20 @@ export interface Caja_driver {
   estado: number;
   observaciones?: string;
   createBy: string;
+  payBy:string;
 }
 
 export interface Sucursal {
   id: number;
   name: string;
+}
+
+export interface protectedRoute {
+  canActivate: unknown;
+  redirectPath?: string;
+}
+
+export interface User {
+  nombres: string;
+  apellidos: string;
 }

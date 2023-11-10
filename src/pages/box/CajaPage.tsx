@@ -45,8 +45,17 @@ export const CajaPage = () => {
 
   const caja_repartidor = async () => {
     const { data } = await httpClient.get("get_caja_repartidor");
-    console.log(data.body)
     setCaja_driver(data.body);
+  };
+
+  const pagado = async (id: number) => {
+    await httpClient.put(`updateEstado/${id}`);
+    caja_repartidor();
+  };
+
+  const deletePago = async (id: number) => {
+    await httpClient.delete(`delete_caja_repartidor/${id}`);
+    caja_repartidor();
   };
 
   // Modal
@@ -54,33 +63,39 @@ export const CajaPage = () => {
   function createData(
     Repartidor: string,
     createBy: string,
+    payBy: string,
+    id: number,
     Monto?: number,
     Hora?: number,
     detalle_id?: number,
     Estado?: number,
     Observaciones?: string, // Use 'Observaciones' with an uppercase 'O'
-    Registros?: string,
+    Registros?: string
   ) {
     return {
       Repartidor,
-      Monto,
       Hora,
       detalle_id,
+      id,
+      Monto,
       Estado,
       Observaciones, // Use 'Observaciones' with an uppercase 'O'
       Registros,
       createBy,
+      payBy,
     };
   }
   const rows = caja_driver.map((caja) =>
     createData(
       caja.repartidor,
       caja.createBy,
+      caja.payBy,
+      caja.id,
       caja.monto,
       caja.hora,
       caja.detalle_id,
       caja.estado,
-      caja.observaciones,
+      caja.observaciones
     )
   );
 
@@ -182,7 +197,11 @@ export const CajaPage = () => {
             </button>
           </div>
           {openModal ? (
-            <CreateCaja setOpenModal={setOpenModal} drivers={drivers} />
+            <CreateCaja
+              setOpenModal={setOpenModal}
+              drivers={drivers}
+              caja_repartidor={caja_repartidor}
+            />
           ) : null}
           <div className="flex justify-center mt-5">
             <select className="w-full py-2 mb-3 rounded-md">
@@ -228,32 +247,40 @@ export const CajaPage = () => {
                       <TableCell align="right">{row.Monto}</TableCell>
                       <TableCell align="right">{row.Hora}</TableCell>
                       <TableCell align="right">{row.detalle_id}</TableCell>
-                      <TableCell align="right">{row.Estado}</TableCell>
-                      <TableCell align="right">{row.Observaciones}</TableCell>
-                      <TableCell align="right">{row.createBy}</TableCell>
                       <TableCell align="right">
-                        <div className="flex">
+                        {row.Estado === 1 ? "PAGADO" : "Sin Pagar"}
+                      </TableCell>
+                      <TableCell align="right">{row.Observaciones}</TableCell>
+                      <TableCell align="right">
+                        <p>ENT.{row.createBy}</p>
+                        <p>PAG.{row.payBy} </p>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-x-3">
+                          <button onClick={() => pagado(row.id)}>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-6 h-6 cursor-pointer"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                          </button>
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
                             strokeWidth={1.5}
                             stroke="currentColor"
-                            className="w-6 h-6"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="w-6 h-6"
+                            className="w-6 h-6 cursor-pointer"
+                            onClick={() => deletePago(row.id)}
                           >
                             <path
                               strokeLinecap="round"

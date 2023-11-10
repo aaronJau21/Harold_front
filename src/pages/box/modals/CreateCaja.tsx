@@ -8,16 +8,20 @@ import {
 } from "@mui/material";
 import { FormEvent, useEffect, useState } from "react";
 import { httpClient } from "../../../services/api";
-import { Detalles, props } from "../../../interfaces/interfaces";
+import { Detalles, User, props } from "../../../interfaces/interfaces";
 import { useLocalStorage } from "react-use";
 
-export const CreateCaja = ({ setOpenModal, drivers }: props) => {
+export const CreateCaja = ({
+  setOpenModal,
+  drivers,
+  caja_repartidor,
+}: props) => {
   const [driver, setDriver] = useState("");
   const [detallevalue, setDetallevalue] = useState("");
   const [monto, setMonto] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [getdetalle, setGetdetalle] = useState<Detalles[]>([]);
-  const [user] = useLocalStorage("user");
+  const [user] = useLocalStorage<User>("user");
   const handleDriverChange = (e: SelectChangeEvent) => {
     setDriver(e.target.value as string);
   };
@@ -25,7 +29,7 @@ export const CreateCaja = ({ setOpenModal, drivers }: props) => {
   const handleDetalleChange = (e: SelectChangeEvent) => {
     setDetallevalue(e.target.value as string);
   };
-  const handleMonto = (e: undefined) => {
+  const handleMonto = (e) => {
     setMonto(e.target.value as number);
   };
 
@@ -42,16 +46,16 @@ export const CreateCaja = ({ setOpenModal, drivers }: props) => {
         driver_id: driver,
         detalle_id: detallevalue,
         monto,
-        createBy: `${user.nombres} ${user.apellidos}`
+        createBy: `${user?.nombres} ${user?.apellidos}`,
         // Otros campos que necesitas enviar
       };
-      console.log(requestData.driver_id);
 
       // Realizar la solicitud POST con los datos construidos
       await httpClient.post("caja_repartidor", requestData);
 
       // Cerrar el modal u realizar otras acciones después de guardar los datos
       setOpenModal(false);
+      caja_repartidor();
     } catch (error) {
       // Manejar errores, por ejemplo, mostrar un mensaje al usuario
       console.error("Error al guardar los detalles:", error);

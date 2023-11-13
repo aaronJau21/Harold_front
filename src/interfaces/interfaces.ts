@@ -3,6 +3,10 @@ import { Dispatch } from "react";
 export interface Drivers {
   id: number;
   f_name: string;
+  l_name?: string;
+  email?: string;
+  role_id?: string;
+  sucursal_id?: string;
 }
 
 export interface props {
@@ -43,7 +47,21 @@ export interface User {
   apellidos: string;
 }
 
+export interface UserData {
+  id: number;
+  f_name: string;
+  I_name?: string;
+  email?: string;
+  role_id?: string;
+  sucursal_id?: string;
+}
+
 export interface CajaData {
   montoApertura?: number;
   salidaEfectivo?: number;
+}
+
+export interface Busines {
+  id: number;
+  name: string;
 }

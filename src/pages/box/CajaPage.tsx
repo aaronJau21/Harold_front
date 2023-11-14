@@ -24,7 +24,9 @@ import {
   Caja_driver,
   Drivers,
   Sucursal,
+  User,
 } from "../../interfaces/interfaces";
+import { useLocalStorage } from "react-use";
 
 export const CajaPage = () => {
   const [sucursales, setSetsucursales] = useState<Sucursal[]>([]);
@@ -33,7 +35,8 @@ export const CajaPage = () => {
   const [caja_driver, setCaja_driver] = useState<Caja_driver[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [cajaData, setCajaData] = useState<CajaData>({});
+  const [cajaData, setCajaData] = useState<CajaData>();
+  const [userLocal] = useLocalStorage<User>("user");
   // Traer todos los sucursales
 
   const getSucursal = async () => {
@@ -43,7 +46,7 @@ export const CajaPage = () => {
 
   // Traer todos los drivers
   const getDriver = async () => {
-    const { data } = await httpClient.get("drivers");
+    const { data } = await httpClient.get("drivers-select");
     if (data.drivers == "") {
       return "";
     }
@@ -52,11 +55,15 @@ export const CajaPage = () => {
 
   const caja_repartidor = async () => {
     const { data } = await httpClient.get("get_caja_repartidor");
+    console.log(data);
     setCaja_driver(data.body);
   };
 
   const pagado = async (id: number) => {
-    await httpClient.put(`updateEstado/${id}`);
+    const datos = {
+      payBy: `${userLocal?.nombres} ${userLocal?.apellidos}`,
+    };
+    await httpClient.put(`updateEstado/${id}`, datos);
     caja_repartidor();
   };
 
@@ -157,11 +164,11 @@ export const CajaPage = () => {
 
             <div>
               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                <InputLabel htmlFor="standard-adornment-amount">
+                <InputLabel htmlFor="standard-adornment-amount2">
                   Total de Salidas del día
                 </InputLabel>
                 <Input
-                  id="standard-adornment-amount"
+                  id="standard-adornment-amount2"
                   type="number"
                   startAdornment={
                     <InputAdornment position="start">$</InputAdornment>

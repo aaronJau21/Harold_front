@@ -11,12 +11,14 @@ interface propsBuscador {
   sucursales: Sucursal[];
   dateNow: (newDate: string) => void;
   updateCajaData: (newCajaData: object) => void;
+  idSucurzal: object;
 }
 
 const BuscadorComponent = ({
   sucursales,
   dateNow,
   updateCajaData,
+  idSucurzal,
 }: propsBuscador) => {
   const [date, setDate] = useState("");
   const [sucursal, setSucursal] = useState("");
@@ -31,15 +33,15 @@ const BuscadorComponent = ({
     if (date && sucursal) {
       handleBuscador(date, sucursal);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, sucursal]);
-
   const handleBuscador = async (fecha: string, selectedSucursal: string) => {
     const { data } = await httpClient.get(
       `get_caja/${fecha}/${selectedSucursal}`
     );
     setCaja(data[0]);
     updateCajaData(data[0]);
+    idSucurzal(selectedSucursal);
   };
 
   return (

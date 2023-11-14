@@ -30,6 +30,7 @@ import { useLocalStorage } from "react-use";
 
 export const CajaPage = () => {
   const [sucursales, setSetsucursales] = useState<Sucursal[]>([]);
+  const [sucursalId, setSucursalId] = useState("");
   const [date, setDate] = useState("");
   const [drivers, setDrivers] = useState<Drivers[]>([]);
   const [caja_driver, setCaja_driver] = useState<Caja_driver[]>([]);
@@ -53,9 +54,10 @@ export const CajaPage = () => {
     setDrivers(data.drivers);
   };
 
-  const caja_repartidor = async () => {
-    const { data } = await httpClient.get("get_caja_repartidor");
-    console.log(data);
+  const caja_repartidor = async (sucursal_id: string, fecha: string) => {
+    const { data } = await httpClient.get(
+      `get_caja_repartidor/${sucursal_id}/${fecha}`
+    );
     setCaja_driver(data.body);
   };
 
@@ -64,14 +66,13 @@ export const CajaPage = () => {
       payBy: `${userLocal?.nombres} ${userLocal?.apellidos}`,
     };
     await httpClient.put(`updateEstado/${id}`, datos);
-    caja_repartidor();
+    caja_repartidor(sucursalId, date);
   };
 
   const deletePago = async (id: number) => {
     await httpClient.delete(`delete_caja_repartidor/${id}`);
-    caja_repartidor();
+    caja_repartidor(sucursalId, date);
   };
-
   // Modal
 
   function createData(
@@ -117,17 +118,20 @@ export const CajaPage = () => {
     setCajaData(newCajaData);
   };
 
+  const idSucurzal = (id: string) => {
+    setSucursalId(id);
+  };
   useEffect(() => {
     getSucursal();
     getDriver();
-    caja_repartidor();
+    caja_repartidor(sucursalId, date);
     setDataLoaded(true);
-  }, []);
+  }, [sucursalId, date]);
 
   const dateNow = (newDate: string) => {
     setDate(newDate);
   };
-
+  console.log(cajaData);
   return (
     <div className="w-full bg-gray-200">
       <HeaderComponent />
@@ -138,6 +142,7 @@ export const CajaPage = () => {
           sucursales={sucursales}
           dateNow={dateNow}
           updateCajaData={updateCajaData}
+          idSucurzal={idSucurzal}
         />
         {/*FIN BUSCADOR */}
 
@@ -224,6 +229,8 @@ export const CajaPage = () => {
               setOpenModal={setOpenModal}
               drivers={drivers}
               caja_repartidor={caja_repartidor}
+              date={date}
+              sucursalId={sucursalId}
             />
           ) : null}
           <div className="flex justify-center mt-5">

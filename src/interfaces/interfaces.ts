@@ -12,7 +12,9 @@ export interface Drivers {
 export interface props {
   setOpenModal: Dispatch<React.SetStateAction<boolean>>;
   drivers: Drivers[];
-  caja_repartidor: () => void;
+  caja_repartidor: (date:string, sucursalId:string) => void;
+  date: string;
+  sucursalId: string;
 }
 
 export interface Detalles {

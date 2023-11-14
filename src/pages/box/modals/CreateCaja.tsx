@@ -10,11 +10,14 @@ import { FormEvent, useEffect, useState } from "react";
 import { httpClient } from "../../../services/api";
 import { Detalles, User, props } from "../../../interfaces/interfaces";
 import { useLocalStorage } from "react-use";
+import getFormattedDate from "../../../utils/dateNow";
 
 export const CreateCaja = ({
   setOpenModal,
   drivers,
   caja_repartidor,
+  date,
+  sucursalId,
 }: props) => {
   const [driver, setDriver] = useState("");
   const [detallevalue, setDetallevalue] = useState("");
@@ -25,7 +28,6 @@ export const CreateCaja = ({
   const handleDriverChange = (e: SelectChangeEvent) => {
     setDriver(e.target.value as string);
   };
-
   const handleDetalleChange = (e: SelectChangeEvent) => {
     setDetallevalue(e.target.value as string);
   };
@@ -47,6 +49,8 @@ export const CreateCaja = ({
         detalle_id: detallevalue,
         monto,
         createBy: `${user?.nombres} ${user?.apellidos}`,
+        fecha: date === "" ? getFormattedDate() : date,
+        sucursal_id: sucursalId,
         // Otros campos que necesitas enviar
       };
 
